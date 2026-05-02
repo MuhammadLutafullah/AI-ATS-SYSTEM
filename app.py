@@ -1,7 +1,4 @@
 import streamlit as st
-from dotenv import load_dotenv
-
-load_dotenv()
 import os
 import PyPDF2
 import requests
@@ -14,6 +11,20 @@ st.set_page_config(
     layout="wide",
     initial_sidebar_state="collapsed"
 )
+
+# ========== FIX: CLOUD + LOCAL API KEY LOAD ==========
+try:
+    # Cloud deployment ke liye (Streamlit Secrets)
+    OPENROUTER_API_KEY = st.secrets["OPENROUTER_API_KEY"]
+    st.success("✅ Using API key from Streamlit Secrets (Cloud Mode)")
+except Exception:
+    # Local development ke liye (.env file)
+    from dotenv import load_dotenv
+    load_dotenv()
+    OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY")
+    st.info("💻 Using API key from .env file (Local Mode)")
+
+OPENROUTER_URL = "https://openrouter.ai/api/v1/chat/completions"
 
 # ========== CUSTOM CSS ==========
 st.markdown("""
@@ -250,11 +261,8 @@ st.markdown('<p class="section-title">🔍 Analysis Options</p>', unsafe_allow_h
 
 btn_col1, btn_col2, btn_col3, btn_col4 = st.columns(4)
 
-# OpenRouter API configuration
-OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY")
-OPENROUTER_URL = "https://openrouter.ai/api/v1/chat/completions"
 
-
+# ========== FUNCTIONS ==========
 def extract_text_from_pdf(uploaded_file):
     if uploaded_file is not None:
         reader = PyPDF2.PdfReader(uploaded_file)
@@ -281,7 +289,7 @@ Instruction:
     headers = {
         "Authorization": f"Bearer {OPENROUTER_API_KEY}",
         "Content-Type": "application/json",
-        "HTTP-Referer": "http://localhost:8501",
+        "HTTP-Referer": "https://ai-ats-system.streamlit.app",
         "X-Title": "ATS System"
     }
     payload = {
@@ -299,6 +307,7 @@ Instruction:
         return f"Error: {str(e)}\n\nPlease check your API key or try again later."
 
 
+# ========== PROMPTS ==========
 input_prompt1 = """
 You are an experienced Technical Human Resource Manager, your task is to review the provided resume against the job description. 
 Please share your professional evaluation on whether the candidate's profile aligns with the role. 
