@@ -1,4 +1,4 @@
-#!/home/ahsanbilal/Projects/LLM_ATS/ats_venv/bin/python3.10
+#!/home/muhammad/Desktop/Personal-ATS-system/ats_venv/bin/python3
 # -*- coding: utf-8 -*-
 import re
 import sys

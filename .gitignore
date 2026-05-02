@@ -1,0 +1,18 @@
+# Virtual environment
+ats_venv/
+venv/
+ENV/
+
+# Python cache
+__pycache__/
+*.py[cod]
+
+# Environment variables
+.env
+
+# Streamlit
+.streamlit/
+
+# IDE
+.vscode/
+.idea/
